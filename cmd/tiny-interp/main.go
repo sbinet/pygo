@@ -10,15 +10,20 @@ func main() {
 	// code: the set of instructions to execute '7+5'
 	code := Code{
 		Prog: []Instruction{
-			OpLoadValue, 0, // load first number
-			OpLoadValue, 1, // load second number
+			OpLoadValue, 0,
+			OpStoreName, 0,
+			OpLoadValue, 1,
+			OpStoreName, 1,
+			OpLoadName, 0,
+			OpLoadName, 1,
 			OpAdd,
 			OpPrint,
 		},
-		Numbers: []int{7, 5},
+		Numbers: []int{1, 2},
+		Names:   []string{"a", "b"},
 	}
 
-	var interp Interpreter
+	interp := New()
 	interp.Run(code)
 }
 
@@ -28,6 +33,8 @@ type Opcode int
 
 const (
 	OpLoadValue Opcode = iota
+	OpLoadName
+	OpStoreName
 	OpAdd
 	OpPrint
 )
@@ -39,11 +46,20 @@ type Instruction interface{}
 type Code struct {
 	Prog    []Instruction // Prog is the set of instructions to execute.
 	Numbers []int         // Numbers is the data being manipulated by the program.
+	Names   []string      // Names is the list of variables' names.
 }
 
 // Interpreter interprets instructions for the tiny-interp interpreter.
 type Interpreter struct {
 	stack stack
+	env   map[string]int
+}
+
+func New() *Interpreter {
+	return &Interpreter{
+		stack: stack{},
+		env:   make(map[string]int),
+	}
 }
 
 func (interp *Interpreter) Run(code Code) {
@@ -63,6 +79,16 @@ func (interp *Interpreter) Run(code Code) {
 		case OpPrint:
 			val := interp.stack.pop()
 			fmt.Println(val)
+		case OpLoadName:
+			pc++
+			name := code.Names[prog[pc].(int)]
+			val := interp.env[name]
+			interp.stack.push(val)
+		case OpStoreName:
+			pc++
+			name := code.Names[prog[pc].(int)]
+			val := interp.stack.pop()
+			interp.env[name] = val
 		}
 	}
 }

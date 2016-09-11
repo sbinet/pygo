@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:generate go run gen-opcodes.go
+//go:generate goimports -w opcodes_gen.go
+
 // pygo exposes an API to interpret Python bytecode.
 package pygo
 
@@ -11,7 +14,7 @@ import (
 
 // Opcode is a single bytecode operation for the Python interpreter.
 // Operands (if any) for the opcode follow in the bytecode stream.
-type Opcode int
+type Opcode byte
 
 const (
 	OpLoadValue Opcode = iota

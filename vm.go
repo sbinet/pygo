@@ -12,7 +12,7 @@ import (
 // Code represents byte-compiled executable Python code.
 type Code struct {
 	name     string   // function name
-	instr    []byte   // bytecode instructions
+	code     []byte   // bytecode instructions
 	nargs    int      // number of positional arguments (including arguments with default values)
 	nlocals  int      // number of local variables used by the function (including arguments)
 	nkwargs  int      // number of keyword arguments
@@ -102,13 +102,13 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 	vm.pushFrame(f)
 	defer vm.popFrame()
 
-	for f.ip < len(f.code.instr) {
-		op := Opcode(f.code.instr[f.ip])
+	for f.ip < len(f.code.code) {
+		op := Opcode(f.code.code[f.ip])
 		f.ip++
 
 		switch op {
 		case Op_LOAD_FAST:
-			i := int(binary.LittleEndian.Uint16(f.code.instr[f.ip : f.ip+2]))
+			i := int(binary.LittleEndian.Uint16(f.code.code[f.ip : f.ip+2]))
 			f.ip += 2
 			name := f.code.varnames[i]
 			v, ok := f.locals[name]

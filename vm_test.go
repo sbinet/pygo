@@ -12,7 +12,7 @@ import (
 func TestVM(t *testing.T) {
 	var vm VM
 	code := &Code{
-		instr:    []byte{124, 0, 0, 124, 1, 0, 23, 83},
+		code:     []byte{124, 0, 0, 124, 1, 0, 23, 83},
 		varnames: []string{"x", "y"},
 	}
 	globals := map[string]Value{

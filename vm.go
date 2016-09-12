@@ -4,6 +4,11 @@
 
 package pygo
 
+import (
+	"encoding/binary"
+	"fmt"
+)
+
 // Code represents byte-compiled executable Python code.
 type Code struct {
 	name     string   // function name
@@ -95,9 +100,36 @@ func (vm *VM) resumeFrame(f *Frame) (Value, error) {
 
 func (vm *VM) runFrame(f *Frame) (Value, error) {
 	vm.pushFrame(f)
-	for {
+	defer vm.popFrame()
+
+	for f.ip < len(f.code.instr) {
+		op := Opcode(f.code.instr[f.ip])
+		f.ip++
+
+		switch op {
+		case Op_LOAD_FAST:
+			i := int(binary.LittleEndian.Uint16(f.code.instr[f.ip : f.ip+2]))
+			f.ip += 2
+			name := f.code.varnames[i]
+			v, ok := f.locals[name]
+			if !ok {
+				// FIXME(sbinet): better error
+				return nil, fmt.Errorf(
+					"local variable '%s' referenced before assignment",
+					name,
+				)
+			}
+			f.stack.push(v)
+
+		case Op_BINARY_ADD:
+			a := f.stack.pop().(int)
+			b := f.stack.pop().(int)
+			f.stack.push(a + b)
+
+		case Op_RETURN_VALUE:
+			vm.ret = f.stack.pop()
+		}
 	}
-	vm.popFrame()
 
 	return vm.ret, nil
 }

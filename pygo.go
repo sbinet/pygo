@@ -8,87 +8,107 @@
 // pygo exposes an API to interpret Python bytecode.
 package pygo
 
-import (
-	"fmt"
+// VM is the pygo virtual machine implementation.
+type VM struct {
+	frames Frames    // call stack of Frames
+	fp     *Frame    // pointer to current Frame
+	ret    Value     // return value
+	exc    exception // last exception
+}
+
+type Frame struct {
+	code     Code
+	globals  map[string]Value
+	locals   map[string]Value
+	builtins map[string]Value
+	prev     *Frame
+	ip       int // instruction pointer
+
+	stack  []Value
+	blocks []block
+}
+
+// Frames is a stack of frames
+type Frames []Frame
+
+type Value interface{}
+
+type exception interface {
+	Type() Value
+	Value() Value
+	Traceback() Value
+}
+
+type pyException struct {
+	typ Value
+	val Value
+	tb  Value
+}
+
+type block struct {
+	typ  blockKind
+	next int
+	stk  int
+}
+
+type blockKind byte
+
+const (
+	bkLoop blockKind = iota
+	bkExceptHandler
+	bkSetupExcept
+	bkFinally
+	bkWith
 )
+
+// Code represents byte-compiled executable Python code.
+type Code struct {
+	name     string   // function name
+	instr    []byte   // bytecode instructions
+	nargs    int      // number of positional arguments (including arguments with default values)
+	nlocals  int      // number of local variables used by the function (including arguments)
+	nkwargs  int      // number of keyword arguments
+	consts   []Value  // tuple containing the literals used by the bytecode
+	names    []string // tuple containing the names used by the bytecode
+	varnames []string // tuple containing the names of the local variables (starting with the argument names)
+	cellvars []string // tuple containing the names of local variables that are referenced by nested functions
+	freevars []string // tuple containing the names of free variables
+
+	fname  string // filename from which the code was compiled
+	lineno int    // first line number of the function
+	flags  int    // number of flags for the interpreter
+
+	lnotab  []byte // slice encoding the mapping from bytecode offsets to line numbers
+	stacksz int    // stacksize is the required stack size (including local variables)
+}
 
 // Opcode is a single bytecode operation for the Python interpreter.
 // Operands (if any) for the opcode follow in the bytecode stream.
 type Opcode byte
 
-const (
-	OpLoadValue Opcode = iota
-	OpLoadName
-	OpStoreName
-	OpAdd
-	OpPrint
-)
-
 // Instruction is a single instruction in a bytecode stream.
 type Instruction interface{}
 
-// Code is a complete bytecompiled program together with data.
-type Code struct {
-	Prog    []Instruction // Prog is the set of instructions to execute.
-	Numbers []int         // Numbers is the data being manipulated by the program.
-	Names   []string      // Names is the list of variables' names.
+// New creates a new Python VM.
+func New() *VM {
+	var vm VM
+	return &vm
 }
 
-// Interpreter interprets instructions for the pygo interpreter.
-type Interpreter struct {
-	stack stack
-	env   map[string]int
-}
-
-// New creates a new Python interpreter.
-func New() *Interpreter {
-	return &Interpreter{
-		stack: stack{},
-		env:   make(map[string]int),
-	}
-}
-
-// Run interprets code compiled to bytecode by some means.
-func (interp *Interpreter) Run(code Code) {
-	prog := code.Prog
-	for pc := 0; pc < len(prog); pc++ {
-		op := prog[pc].(Opcode)
-		switch op {
-		case OpLoadValue:
-			pc++
-			val := code.Numbers[prog[pc].(int)]
-			interp.stack.push(val)
-		case OpAdd:
-			lhs := interp.stack.pop()
-			rhs := interp.stack.pop()
-			sum := lhs + rhs
-			interp.stack.push(sum)
-		case OpPrint:
-			val := interp.stack.pop()
-			fmt.Println(val)
-		case OpLoadName:
-			pc++
-			name := code.Names[prog[pc].(int)]
-			val := interp.env[name]
-			interp.stack.push(val)
-		case OpStoreName:
-			pc++
-			name := code.Names[prog[pc].(int)]
-			val := interp.stack.pop()
-			interp.env[name] = val
-		}
-	}
+// RunCode interprets code compiled to bytecode by some means.
+func (vm *VM) RunCode(code Code) (Value, error) {
+	return nil, nil
 }
 
 type stack struct {
-	stk []int
+	stk []Value
 }
 
-func (s *stack) push(v int) {
+func (s *stack) push(v Value) {
 	s.stk = append(s.stk, v)
 }
 
-func (s *stack) pop() int {
+func (s *stack) pop() Value {
 	i := len(s.stk) - 1
 	v := s.stk[i]
 	s.stk = s.stk[:i]

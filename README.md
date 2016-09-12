@@ -18,3 +18,7 @@ interprets it.
 
 As in the AOSA book, we'll start with a tiny interpreter, `tiny-interp`.
 The code is under `cmd/tiny-interp`.
+
+## pygo
+
+The "real" toy Python interpreter.

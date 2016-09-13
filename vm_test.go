@@ -11,7 +11,11 @@ import (
 
 func TestVM(t *testing.T) {
 	var vm VM
+	// bytecode for:
+	// >>> def add(x,y):
+	// ...  return x + y
 	code := &Code{
+		name:     "add",
 		code:     []byte{124, 0, 0, 124, 1, 0, 23, 83},
 		varnames: []string{"x", "y"},
 	}

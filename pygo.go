@@ -4,6 +4,8 @@
 
 //go:generate go run gen-opcodes.go
 //go:generate goimports -w opcodes_gen.go
+//go:generate go run gen-unary-ops.go
+//go:generate goimports -w unary_ops_gen.go
 
 // pygo exposes an API to interpret Python bytecode.
 package pygo

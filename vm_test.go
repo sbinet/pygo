@@ -23,15 +23,77 @@ func TestVM(t *testing.T) {
 	}
 	locals := map[string]Value{
 		"__builtins__": builtins,
-		"x":            40,
-		"y":            2,
 	}
-	v, err := vm.RunCode(code, globals, locals)
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := 42
-	if !reflect.DeepEqual(v, want) {
-		t.Fatalf("got %v. want %v\n", v, want)
+
+	for _, test := range []struct {
+		name string
+		x    Value
+		y    Value
+		want Value
+	}{
+		{
+			name: "add-bb",
+			x:    false,
+			y:    false,
+			want: 0,
+		},
+		{
+			name: "add-bb",
+			x:    true,
+			y:    false,
+			want: 1,
+		},
+		{
+			name: "add-bb",
+			x:    true,
+			y:    true,
+			want: 2,
+		},
+		{
+			name: "add-ii",
+			x:    -44,
+			y:    +2,
+			want: -42,
+		},
+		{
+			name: "add-ii",
+			x:    44,
+			y:    -2,
+			want: 42,
+		},
+		{
+			name: "add-ii",
+			x:    40,
+			y:    2,
+			want: 42,
+		},
+		{
+			name: "add-fi",
+			x:    40,
+			y:    2.0,
+			want: 42.0,
+		},
+		{
+			name: "add-ff",
+			x:    40.1,
+			y:    2.0,
+			want: 42.1,
+		},
+		{
+			name: "add-ss",
+			x:    "hel",
+			y:    "lo",
+			want: "hello",
+		},
+	} {
+		locals["x"] = test.x
+		locals["y"] = test.y
+		v, err := vm.RunCode(code, globals, locals)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(v, test.want) {
+			t.Fatalf("%s(%v, %v): got %v. want %v\n", test.name, test.x, test.y, v, test.want)
+		}
 	}
 }

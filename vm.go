@@ -46,7 +46,7 @@ func (s *stack) pop() Value {
 
 func (s *stack) popn(n int) []Value {
 	o := make([]Value, n)
-	i := len(*s) - 1 - n
+	i := len(*s) - n
 	copy(o, (*s)[i:])
 	*s = (*s)[:i]
 	return o
@@ -244,9 +244,8 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 			Op_BINARY_OR, Op_BINARY_POWER, Op_BINARY_RSHIFT, Op_BINARY_SUBSCR,
 			Op_BINARY_SUBTRACT,
 			Op_BINARY_TRUE_DIVIDE, Op_BINARY_XOR:
-			a := f.stack.pop()
-			b := f.stack.pop()
-			v, err := binaryOp(a, b, op)
+			args := f.stack.popn(2)
+			v, err := binaryOp(args[0], args[1], op)
 			if err != nil {
 				return nil, err
 			}

@@ -26,7 +26,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := bool2int(rvb.Bool())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -36,7 +36,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := uint(rvb.Uint())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -45,7 +45,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := uint8(rvb.Uint())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -54,7 +54,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := uint16(rvb.Uint())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -63,7 +63,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := uint32(rvb.Uint())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -72,7 +72,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := rvb.Uint()
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -82,7 +82,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := int(rvb.Int())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -91,7 +91,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := int8(rvb.Int())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -100,7 +100,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := int16(rvb.Int())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -109,7 +109,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := int32(rvb.Int())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -118,7 +118,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := rvb.Int()
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -128,7 +128,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := float32(rvb.Float())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -137,7 +137,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := rvb.Float()
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -147,7 +147,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := complex64(rvb.Complex())
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -156,7 +156,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := rvb.Complex()
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}
@@ -166,7 +166,7 @@ func binaryOp(a, b Value, op Opcode) (Value, error) {
 		bb := rvb.String()
 		switch op {
 		case Op_BINARY_ADD:
-			return bb + aa, nil
+			return aa + bb, nil
 		default:
 			panic("not implemented")
 		}

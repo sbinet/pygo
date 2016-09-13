@@ -90,6 +90,24 @@ func TestVM(t *testing.T) {
 			want: 42.1,
 		},
 		{
+			name: "add-jj",
+			x:    complex(40, 2),
+			y:    complex(2, 40),
+			want: complex(42, 42),
+		},
+		{
+			name: "add-ji",
+			x:    complex(40, 2),
+			y:    2,
+			want: complex(42, 2),
+		},
+		{
+			name: "add-jf",
+			x:    complex(40, 2),
+			y:    2.1,
+			want: complex(42.1, 2),
+		},
+		{
 			name: "add-ss",
 			x:    "hel",
 			y:    "lo",

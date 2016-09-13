@@ -50,6 +50,12 @@ func TestVM(t *testing.T) {
 			want: 2,
 		},
 		{
+			name: "add-xx",
+			x:    byte(104),
+			y:    byte(111),
+			want: byte(215),
+		},
+		{
 			name: "add-ii",
 			x:    -44,
 			y:    +2,

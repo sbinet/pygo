@@ -325,6 +325,16 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 				return nil, err
 			}
 
+		case Op_BUILD_TUPLE:
+			i := f.iload()
+			args := f.stack.popn(i)
+			f.stack.push(pytuple{i, args})
+
+		case Op_BUILD_LIST:
+			i := f.iload()
+			args := f.stack.popn(i)
+			f.stack.push(pylist{args})
+
 		case Op_RETURN_VALUE:
 			vm.ret = f.stack.pop()
 
@@ -351,3 +361,12 @@ const (
 	cmpOpISNOT
 	cmpOpISSUB
 )
+
+type pytuple struct {
+	n int
+	v []Value
+}
+
+type pylist struct {
+	v []Value
+}

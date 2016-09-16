@@ -251,6 +251,18 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 			}
 			f.stack.push(v)
 
+		case Op_INPLACE_ADD, Op_INPLACE_AND, Op_INPLACE_FLOOR_DIVIDE,
+			Op_INPLACE_LSHIFT, Op_INPLACE_MATRIX_MULTIPLY, Op_INPLACE_MODULO,
+			Op_INPLACE_MULTIPLY, Op_INPLACE_OR, Op_INPLACE_POWER,
+			Op_INPLACE_RSHIFT, Op_INPLACE_SUBTRACT,
+			Op_INPLACE_TRUE_DIVIDE, Op_INPLACE_XOR:
+			args := f.stack.popn(2)
+			v, err := binaryOp(args[0], args[1], op)
+			if err != nil {
+				return nil, err
+			}
+			f.stack.push(v)
+
 		case Op_RETURN_VALUE:
 			vm.ret = f.stack.pop()
 

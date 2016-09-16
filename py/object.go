@@ -23,4 +23,16 @@ type Object interface {
 	DelItem(key Object) error
 
 	Dir() ([]string, error)
+
+	Type() Object
+}
+
+// AttributeError is returned when an attempt at finding an attribute
+// of a Python object failed.
+type AttributeError struct {
+	Name string
+}
+
+func (err AttributeError) Error() string {
+	return "object has no attribute '" + err.Name + "'"
 }

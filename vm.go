@@ -335,6 +335,11 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 			args := f.stack.popn(i)
 			f.stack.push(pylist{args})
 
+		case Op_BUILD_SET:
+			i := f.iload()
+			args := f.stack.popn(i)
+			f.stack.push(pyset{args})
+
 		case Op_RETURN_VALUE:
 			vm.ret = f.stack.pop()
 
@@ -368,5 +373,9 @@ type pytuple struct {
 }
 
 type pylist struct {
+	v []Value
+}
+
+type pyset struct {
 	v []Value
 }

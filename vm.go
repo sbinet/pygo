@@ -340,6 +340,11 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 			args := f.stack.popn(i)
 			f.stack.push(pyset{args})
 
+		case Op_BUILD_MAP:
+			i := f.iload()
+			v := make(map[Value]Value, i)
+			f.stack.push(pymap{v})
+
 		case Op_RETURN_VALUE:
 			vm.ret = f.stack.pop()
 
@@ -378,4 +383,8 @@ type pylist struct {
 
 type pyset struct {
 	v []Value
+}
+
+type pymap struct {
+	v map[Value]Value
 }

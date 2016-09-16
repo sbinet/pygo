@@ -4,7 +4,11 @@
 
 package pygo
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/sbinet/pygo/py"
+)
 
 // Code represents byte-compiled executable Python code.
 type Code struct {
@@ -263,6 +267,64 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 			}
 			f.stack.push(v)
 
+		case Op_COMPARE_OP:
+			i := f.iload()
+			args := f.stack.popn(2)
+			v, err := compareOp(args[0], args[1], cmpOp(i))
+			if err != nil {
+				return nil, err
+			}
+			f.stack.push(v)
+
+		case Op_LOAD_ATTR:
+			i := f.iload()
+			n := f.code.names[i]
+			v := f.stack.pop().(py.Object)
+			v, err := v.GetAttr(n)
+			if err != nil {
+				return nil, err
+			}
+			f.stack.push(v)
+
+		case Op_STORE_ATTR:
+			i := f.iload()
+			n := f.code.names[i]
+			args := f.stack.popn(2)
+			v := args[0].(py.Object)
+			o := args[1].(py.Object)
+			err := o.SetAttr(n, v)
+			if err != nil {
+				return nil, err
+			}
+
+		case Op_DELETE_ATTR:
+			i := f.iload()
+			n := f.code.names[i]
+			v := f.stack.pop().(py.Object)
+			err := v.DelAttr(n)
+			if err != nil {
+				return nil, err
+			}
+
+		case Op_STORE_SUBSCR:
+			args := f.stack.popn(3)
+			v := args[0].(py.Object)
+			o := args[1].(py.Object)
+			i := args[2].(py.Object)
+			err := o.SetItem(i, v)
+			if err != nil {
+				return nil, err
+			}
+
+		case Op_DELETE_SUBSCR:
+			args := f.stack.popn(2)
+			o := args[0].(py.Object)
+			i := args[1].(py.Object)
+			err := o.DelItem(i)
+			if err != nil {
+				return nil, err
+			}
+
 		case Op_RETURN_VALUE:
 			vm.ret = f.stack.pop()
 
@@ -273,3 +335,19 @@ func (vm *VM) runFrame(f *Frame) (Value, error) {
 
 	return vm.ret, nil
 }
+
+type cmpOp int
+
+const (
+	cmpOpLT cmpOp = iota
+	cmpOpLE
+	cmpOpEQ
+	cmpOpNE
+	cmpOpGT
+	cmpOpGE
+	cmpOpIN
+	cmpOpNIN
+	cmpOpIS
+	cmpOpISNOT
+	cmpOpISSUB
+)
